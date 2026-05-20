@@ -11,6 +11,7 @@ import base64
 
 class Item(BaseModel):
     data: str
+    target_time: str | None = "08:00"
 
 
 api = FastAPI()
@@ -30,12 +31,14 @@ api.add_middleware(
 path = "ocr_img.png"
 @api.post("/process-img")
 async def process_img(item: Item):
+    hours, minutes = map(int, item.target_time.split(":"))
+    time_delta = timedelta(hours=hours, minutes=minutes)
     img = base64.b64decode(item.data)
     with open("output_image.png", "wb") as image_file:
         image_file.write(img)
     text, formated_times = OCR_clipboard_image("./output_image.png")
     print(f"Zeiten: {formated_times}")
-    end_time= await get_end_times(formated_times,"P0Y0M0DT0H30M0S","P0Y0M0DT8H0M0S")
+    end_time= await get_end_times(formated_times,"P0Y0M0DT0H30M0S", time_delta)
     return {"end_time": end_time.isoformat(), "times": formated_times}
 
 # Api Endpoint to get menus

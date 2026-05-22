@@ -1,0 +1,35 @@
+name: Remote Deploy FastAPI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Remote Deployment via SSH
+        env:
+          # Hier werden die Secrets in Umgebungsvariablen für die Shell geladen
+          SERVER_IP: ${{ secrets.FASTAPI_SERVER_IP }}
+          USERNAME: ${{ secrets.REMOTE_USER }}
+          TARGET_DIR: ${{ secrets.PROJECT_PATH }}
+        run: |
+          # Wir nutzen die Variablen hier mit dem $ Zeichen
+          ssh -o StrictHostKeyChecking=no ${USERNAME}@${SERVER_IP} << EOF
+            cd ${TARGET_DIR}
+            
+            git pull origin main
+            
+            # Falls du eine virtuelle Umgebung nutzt
+            if [ -d "venv" ]; then
+              source venv/bin/activate
+            fi
+            
+            pip install -r requirements.txt
+            
+            # Neustart des Services
+            sudo systemctl restart fastapi-app.service
+          EOF

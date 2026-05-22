@@ -20,6 +20,7 @@ jobs:
           # Wir nutzen die Variablen hier mit dem $ Zeichen
           ssh -o StrictHostKeyChecking=no ${USERNAME}@${SERVER_IP} << EOF
             ls
+            cd /
             cd ${TARGET_DIR}
             
             git pull origin main

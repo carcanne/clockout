@@ -29,6 +29,9 @@ api.add_middleware(
     allow_headers=["*"],  # Erlaubt alle Header
 )
 path = "ocr_img.png"
+@api.get("/")
+async def root():
+    return {"message": "Hello World"}
 @api.post("/process-img")
 async def process_img(item: Item):
     hours, minutes = map(int, item.target_time.split(":"))

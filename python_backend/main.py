@@ -71,6 +71,7 @@ async def get_transport_data(target_location:str, end_time:datetime, walking_tim
         )
         data = r.json()
     print()
+    print(test)
     print("Nächste Abfahrten ab Buchrain:")
     for verbindung in data.get("connections", []):
         abfahrt = datetime.fromisoformat(verbindung["from"]["departure"])
@@ -79,3 +80,6 @@ async def get_transport_data(target_location:str, end_time:datetime, walking_tim
             print(f"  {abfahrt.strftime('%H:%M')} Uhr (Verspätung: {verbindung['from']['delay']} Min.)")
         else:
             print(f"  {abfahrt.strftime('%H:%M')} Uhr")
+
+
+
